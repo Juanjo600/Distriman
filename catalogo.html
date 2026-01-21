@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo de Productos | Distriman</title>
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+
+<!-- CONTENIDO -->
+<section class="page">
+  <h1>Catálogo de Productos</h1>
+
+  <!-- FILTROS -->
+  <div style="margin-bottom: 32px;">
+    <input
+      type="text"
+      id="busqueda"
+      placeholder="Buscar producto"
+    >
+
+    <select id="categoria">
+      <option value="all">Todas las categorías</option>
+    </select>
+  </div>
+
+  <!-- GRID DE PRODUCTOS -->
+  <div id="catalogo" class="grid features"></div>
+</section>
+
+<!-- FOOTER -->
+<div id="footer"></div>
+
+
+<!-- WHATSAPP FLOTANTE -->
+<a
+  class="whatsapp"
+  href="https://wa.me/59894862909"
+  target="_blank"
+  aria-label="WhatsApp"
+>
+  💬
+</a>
+
+<!-- JS (orden IMPORTANTE) -->
+<script src="data/productos.js"></script>
+<script src="js/main.js"></script>
+<script src="js/layout.js"></script>
+
+</body>
+</html>
