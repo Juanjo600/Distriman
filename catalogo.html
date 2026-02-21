@@ -11,7 +11,6 @@
 
 <div id="header"></div>
 
-
 <!-- CONTENIDO -->
 <section class="page">
   <h1>Catálogo de Productos</h1>
@@ -36,7 +35,6 @@
 <!-- FOOTER -->
 <div id="footer"></div>
 
-
 <!-- WHATSAPP FLOTANTE -->
 <a
   class="whatsapp"
@@ -48,8 +46,17 @@
 </a>
 
 <!-- JS (orden IMPORTANTE) -->
+
+<!-- 1️⃣ Librería para leer CSV -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<!-- 2️⃣ Productos (ahora leerá CSV) -->
 <script src="data/productos.js"></script>
+
+<!-- 3️⃣ Lógica principal -->
 <script src="js/main.js"></script>
+
+<!-- 4️⃣ Layout -->
 <script src="js/layout.js"></script>
 
 </body>

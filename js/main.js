@@ -4,16 +4,24 @@ const categoriaSelect = document.getElementById("categoria");
 
 if (catalogo) {
 
-  const categorias = [...new Set(productos.map(p => p.categoria))];
-  categorias.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    categoriaSelect.appendChild(opt);
-  });
+  function obtenerImagen(imagenBase) {
+    const img = document.createElement("img");
+    img.loading = "lazy";
+
+    img.src = `img/${imagenBase}.webp`;
+
+    img.onerror = function () {
+      if (this.src.includes(".webp")) {
+        this.src = `img/${imagenBase}.jpg`;
+      } else if (this.src.includes(".jpg")) {
+        this.src = `img/${imagenBase}.png`;
+      }
+    };
+
+    return img;
+  }
 
   function abrirModal(producto) {
-    let index = 0;
 
     const mensaje = encodeURIComponent(
       `Hola, estoy interesado en el producto: ${producto.nombre}`
@@ -28,9 +36,7 @@ if (catalogo) {
 
         <div class="modal-body">
           <div class="modal-img">
-            <button class="modal-arrow left">‹</button>
-            <img src="${producto.imagenes[0]}" alt="${producto.nombre}">
-            <button class="modal-arrow right">›</button>
+            <img id="modal-img" alt="${producto.nombre}">
           </div>
 
           <div class="modal-info">
@@ -50,22 +56,12 @@ if (catalogo) {
       </div>
     `;
 
-    const img = modal.querySelector("img");
-    const close = modal.querySelector(".modal-close");
-    const left = modal.querySelector(".modal-arrow.left");
-    const right = modal.querySelector(".modal-arrow.right");
+    const img = obtenerImagen(producto.imagenBase);
+    img.id = "modal-img";
 
-    left.onclick = () => {
-      index = (index - 1 + producto.imagenes.length) % producto.imagenes.length;
-      img.src = producto.imagenes[index];
-    };
+    modal.querySelector(".modal-img").appendChild(img);
 
-    right.onclick = () => {
-      index = (index + 1) % producto.imagenes.length;
-      img.src = producto.imagenes[index];
-    };
-
-    close.onclick = () => modal.remove();
+    modal.querySelector(".modal-close").onclick = () => modal.remove();
     modal.onclick = e => e.target === modal && modal.remove();
 
     document.body.appendChild(modal);
@@ -77,6 +73,16 @@ if (catalogo) {
     const texto = busqueda.value.toLowerCase();
     const categoria = categoriaSelect.value;
 
+    const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
+
+    categoriaSelect.innerHTML = `<option value="all">Todas las categorías</option>`;
+    categoriasUnicas.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      categoriaSelect.appendChild(opt);
+    });
+
     productos
       .filter(p =>
         p.nombre.toLowerCase().includes(texto) &&
@@ -84,37 +90,23 @@ if (catalogo) {
       )
       .forEach(p => {
 
-        let index = 0;
-
         const card = document.createElement("div");
         card.className = "producto";
 
-        card.innerHTML = `
-          <div class="producto-img">
-            <button class="flecha izq">‹</button>
-            <img src="${p.imagenes[0]}" alt="${p.nombre}">
-            <button class="flecha der">›</button>
-          </div>
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "producto-img";
+
+        const img = obtenerImagen(p.imagenBase);
+
+        imgContainer.appendChild(img);
+
+        card.appendChild(imgContainer);
+
+        card.innerHTML += `
           <h3>${p.nombre}</h3>
           <p>${p.descripcion}</p>
           <strong>$${p.precio}</strong>
         `;
-
-        const img = card.querySelector("img");
-        const izq = card.querySelector(".izq");
-        const der = card.querySelector(".der");
-
-        izq.onclick = e => {
-          e.stopPropagation();
-          index = (index - 1 + p.imagenes.length) % p.imagenes.length;
-          img.src = p.imagenes[index];
-        };
-
-        der.onclick = e => {
-          e.stopPropagation();
-          index = (index + 1) % p.imagenes.length;
-          img.src = p.imagenes[index];
-        };
 
         card.onclick = () => abrirModal(p);
 
