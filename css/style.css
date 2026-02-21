@@ -416,3 +416,11 @@ html, body {
     }
   }
   
+  .producto p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* cantidad de líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 4.5em; /* mantiene altura uniforme */
+  }
