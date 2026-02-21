@@ -19,6 +19,7 @@ if (catalogo) {
   }
 
   function abrirModal(producto) {
+
     document.body.style.overflow = "hidden";
   
     const mensaje = encodeURIComponent(
@@ -58,19 +59,32 @@ if (catalogo) {
       </div>
     `;
   
-    // Insertar la imagen
-    const img = obtenerImagen(producto.imagenBase);
     const imgContainer = modal.querySelector(".modal-img");
+    const img = obtenerImagen(producto.imagenBase);
     imgContainer.appendChild(img);
   
-    // ----------- ZOOM LENTE -----------
+    // Cerrar modal
+    modal.querySelector(".modal-close").onclick = () => {
+      document.body.style.overflow = "";
+      modal.remove();
+    };
+  
+    modal.onclick = e => {
+      if (e.target === modal) {
+        document.body.style.overflow = "";
+        modal.remove();
+      }
+    };
+  
+    document.body.appendChild(modal);
+  
+    // ---------------- ZOOM LENTE ----------------
     const lente = document.createElement("div");
     lente.className = "zoom-lente";
     imgContainer.appendChild(lente);
   
-    // Esperar que la imagen cargue para conocer sus dimensiones naturales
     img.onload = () => {
-      const zoomFactor = 2; // cuanto quieres hacer zoom
+      const zoomFactor = 3; // Aumenta el zoom
       const naturalWidth = img.naturalWidth;
       const naturalHeight = img.naturalHeight;
   
@@ -87,9 +101,8 @@ if (catalogo) {
         lente.style.left = x + "px";
         lente.style.top = y + "px";
   
-        // Ajuste del background usando tamaño natural
-        const bgX = (x / rect.width) * naturalWidth * -zoomFactor + lente.offsetWidth/2;
-        const bgY = (y / rect.height) * naturalHeight * -zoomFactor + lente.offsetHeight/2;
+        const bgX = (x / rect.width) * naturalWidth * -zoomFactor + lente.offsetWidth / 2;
+        const bgY = (y / rect.height) * naturalHeight * -zoomFactor + lente.offsetHeight / 2;
   
         lente.style.backgroundImage = `url(${img.src})`;
         lente.style.backgroundSize = `${naturalWidth * zoomFactor}px ${naturalHeight * zoomFactor}px`;
@@ -100,22 +113,6 @@ if (catalogo) {
         lente.style.display = "none";
       });
     };
-    // -----------------------------------
-  
-    // Cerrar modal
-    modal.querySelector(".modal-close").onclick = () => {
-      document.body.style.overflow = "";
-      modal.remove();
-    };
-  
-    modal.onclick = e => {
-      if (e.target === modal) {
-        document.body.style.overflow = "";
-        modal.remove();
-      }
-    };
-  
-    document.body.appendChild(modal);
   }
 
   function render() {

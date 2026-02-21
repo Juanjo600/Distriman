@@ -716,16 +716,16 @@ input:focus, select:focus {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* ---------- ZOOM SOBRE IMAGEN EN MODAL ---------- */
+/* CSS: zoom-lente */
 .zoom-lente {
   position: absolute;
-  border: 2px solid rgba(0,0,0,0.3);
-  width: 120px;
-  height: 120px;
-  border-radius: 50%; /* círculo */
-  display: none; /* solo aparece al hacer hover */
-  pointer-events: none;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  width: 200px;  /* antes 100px, ahora más grande */
+  height: 200px; /* antes 100px */
+  display: none;
+  cursor: crosshair;
   background-repeat: no-repeat;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
   z-index: 10;
 }
