@@ -715,3 +715,17 @@ input:focus, select:focus {
   from { transform: scale(0.96); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* ---------- ZOOM SOBRE IMAGEN EN MODAL ---------- */
+.zoom-lente {
+  position: absolute;
+  border: 2px solid rgba(0,0,0,0.3);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%; /* círculo */
+  display: none; /* solo aparece al hacer hover */
+  pointer-events: none;
+  background-repeat: no-repeat;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 10;
+}

@@ -19,34 +19,33 @@ if (catalogo) {
   }
 
   function abrirModal(producto) {
-
     document.body.style.overflow = "hidden";
-
+  
     const mensaje = encodeURIComponent(
       `Hola, estoy interesado en el producto: ${producto.nombre}`
     );
-
+  
     const descripcionFormateada = producto.descripcion.replace(/\n/g, "<br>");
-
+  
     const precioHTML = producto.precio
       ? `<div class="modal-precio">$${producto.precio}</div>`
       : "";
-
+  
     const modal = document.createElement("div");
     modal.className = "modal";
-
+  
     modal.innerHTML = `
       <div class="modal-content">
         <span class="modal-close">×</span>
-
+  
         <div class="modal-body">
           <div class="modal-img"></div>
-
+  
           <div class="modal-info">
             <h2>${producto.nombre}</h2>
             ${precioHTML}
             <div class="modal-descripcion">${descripcionFormateada}</div>
-
+  
             <a
               class="modal-cta"
               href="https://wa.me/59894862909?text=${mensaje}"
@@ -58,22 +57,55 @@ if (catalogo) {
         </div>
       </div>
     `;
-
+  
+    // Insertar la imagen
     const img = obtenerImagen(producto.imagenBase);
-    modal.querySelector(".modal-img").appendChild(img);
-
+    const imgContainer = modal.querySelector(".modal-img");
+    imgContainer.appendChild(img);
+  
+    // ----------- ZOOM LENTE -----------
+    const lente = document.createElement("div");
+    lente.className = "zoom-lente";
+    imgContainer.appendChild(lente);
+  
+    imgContainer.addEventListener("mousemove", e => {
+      lente.style.display = "block";
+  
+      const rect = e.currentTarget.getBoundingClientRect();
+      let x = e.clientX - rect.left - lente.offsetWidth / 2;
+      let y = e.clientY - rect.top - lente.offsetHeight / 2;
+  
+      // Limitar para que no salga de la imagen
+      x = Math.max(0, Math.min(x, rect.width - lente.offsetWidth));
+      y = Math.max(0, Math.min(y, rect.height - lente.offsetHeight));
+  
+      lente.style.left = x + "px";
+      lente.style.top = y + "px";
+  
+      // Fondo para el zoom
+      lente.style.backgroundImage = `url(${producto.imagenBase ? `img/${producto.imagenBase}` : "img/placeholder.webp"})`;
+      lente.style.backgroundSize = `${rect.width * 2}px ${rect.height * 2}px`; // zoom 2x
+      lente.style.backgroundPosition = `-${x*2}px -${y*2}px`;
+    });
+  
+    imgContainer.addEventListener("mouseleave", () => {
+      lente.style.display = "none";
+    });
+    // -----------------------------------
+  
+    // Cerrar modal
     modal.querySelector(".modal-close").onclick = () => {
       document.body.style.overflow = "";
       modal.remove();
     };
-
+  
     modal.onclick = e => {
       if (e.target === modal) {
         document.body.style.overflow = "";
         modal.remove();
       }
     };
-
+  
     document.body.appendChild(modal);
   }
 
