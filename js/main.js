@@ -78,19 +78,22 @@ if (catalogo) {
   
     document.body.appendChild(modal);
   
-    // ---------------- ZOOM LENTE AJUSTADO ----------------
+    // ---------------- ZOOM LENTE OPTIMIZADO ----------------
     const lente = document.createElement("div");
     lente.className = "zoom-lente";
     imgContainer.appendChild(lente);
   
-    // Ajustamos tamaño y borde en CSS si no está hecho
-    lente.style.width = "220px"; 
-    lente.style.height = "220px"; 
+    lente.style.width = "250px";   // Lente más grande
+    lente.style.height = "250px";
     lente.style.border = "2px solid rgba(0,0,0,0.2)";
     lente.style.borderRadius = "50%";
+    lente.style.position = "absolute";
+    lente.style.pointerEvents = "none"; // No bloquear el mouse
+    lente.style.display = "none";
   
     img.onload = () => {
-      const zoomFactor = 1.8; // <--- zoom más moderado
+      const zoomFactor = 1.4; // zoom más moderado
+  
       const naturalWidth = img.naturalWidth;
       const naturalHeight = img.naturalHeight;
   
@@ -98,15 +101,17 @@ if (catalogo) {
         lente.style.display = "block";
   
         const rect = imgContainer.getBoundingClientRect();
-        let x = e.clientX - rect.left - lente.offsetWidth / 2;
-        let y = e.clientY - rect.top - lente.offsetHeight / 2;
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
   
-        x = Math.max(0, Math.min(x, rect.width - lente.offsetWidth));
-        y = Math.max(0, Math.min(y, rect.height - lente.offsetHeight));
+        // Posición de la lente centrada en el mouse
+        const lensX = x - lente.offsetWidth / 2;
+        const lensY = y - lente.offsetHeight / 2;
   
-        lente.style.left = x + "px";
-        lente.style.top = y + "px";
+        lente.style.left = lensX + "px";
+        lente.style.top = lensY + "px";
   
+        // Background position proporcional
         const bgX = (x / rect.width) * naturalWidth * -zoomFactor + lente.offsetWidth / 2;
         const bgY = (y / rect.height) * naturalHeight * -zoomFactor + lente.offsetHeight / 2;
   
