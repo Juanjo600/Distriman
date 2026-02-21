@@ -14,20 +14,7 @@ if (catalogo) {
       return img;
     }
   
-    const extensiones = ["webp", "jpg", "png"];
-    let intento = 0;
-  
-    img.onerror = function () {
-      intento++;
-      if (intento < extensiones.length) {
-        img.src = `img/${imagenBase}.${extensiones[intento]}`;
-      } else {
-        img.src = "img/placeholder.webp";
-      }
-    };
-  
-    // ⚠️ IMPORTANTE: asignamos src DESPUÉS de definir onerror
-    img.src = `img/${imagenBase}.${extensiones[intento]}`;
+    img.src = `img/${imagenBase}`;
   
     return img;
   }
