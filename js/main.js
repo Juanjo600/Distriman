@@ -78,13 +78,19 @@ if (catalogo) {
   
     document.body.appendChild(modal);
   
-    // ---------------- ZOOM LENTE ----------------
+    // ---------------- ZOOM LENTE AJUSTADO ----------------
     const lente = document.createElement("div");
     lente.className = "zoom-lente";
     imgContainer.appendChild(lente);
   
+    // Ajustamos tamaño y borde en CSS si no está hecho
+    lente.style.width = "220px"; 
+    lente.style.height = "220px"; 
+    lente.style.border = "2px solid rgba(0,0,0,0.2)";
+    lente.style.borderRadius = "50%";
+  
     img.onload = () => {
-      const zoomFactor = 3; // Aumenta el zoom
+      const zoomFactor = 1.8; // <--- zoom más moderado
       const naturalWidth = img.naturalWidth;
       const naturalHeight = img.naturalHeight;
   
