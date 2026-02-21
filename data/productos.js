@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const categoria = limpiar(item.categoria);
         const descripcion = limpiar(item.descripcion);
         const precioRaw = limpiar(item.precio);
-        const imagenBase = limpiar(item.imagen_base);
+        const imagenBase = limpiar(item["NOMBRE FOTO"]);
 
         return {
           id: `producto-${index}`,
