@@ -8,14 +8,15 @@ if (catalogo) {
 
     const img = document.createElement("img");
     img.loading = "lazy";
-  
+
     if (!imagenBase) {
       img.src = "img/placeholder.webp";
       return img;
     }
-  
+
     img.src = `img/${imagenBase}`;
-  
+    img.alt = imagenBase;
+
     return img;
   }
 
@@ -27,6 +28,11 @@ if (catalogo) {
 
     const precioHTML = producto.precio
       ? `<div class="modal-precio">$${producto.precio}</div>`
+      : "";
+
+    // 🔥 Formatear saltos de línea
+    const descripcionFormateada = producto.descripcion
+      ? producto.descripcion.replace(/\n/g, "<br>")
       : "";
 
     const modal = document.createElement("div");
@@ -41,13 +47,14 @@ if (catalogo) {
 
           <div class="modal-info">
             <h2>${producto.nombre}</h2>
-            <p>${producto.descripcion}</p>
+            <p>${descripcionFormateada}</p>
             ${precioHTML}
 
             <a
               class="modal-cta"
               href="https://wa.me/59894862909?text=${mensaje}"
               target="_blank"
+              rel="noopener"
             >
               ¿Interesado? Contactate con nosotros
             </a>
@@ -59,26 +66,53 @@ if (catalogo) {
     const img = obtenerImagen(producto.imagenBase);
     modal.querySelector(".modal-img").appendChild(img);
 
-    modal.querySelector(".modal-close").onclick = () => modal.remove();
-    modal.onclick = e => e.target === modal && modal.remove();
+    // 🔒 BLOQUEAR SCROLL DEL BODY
+    document.body.style.overflow = "hidden";
+
+    const cerrarModal = () => {
+      modal.remove();
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", escListener);
+    };
+
+    // Cerrar con botón
+    modal.querySelector(".modal-close").onclick = cerrarModal;
+
+    // Cerrar haciendo click afuera
+    modal.onclick = e => {
+      if (e.target === modal) cerrarModal();
+    };
+
+    // 🔥 Evitar que el click del botón cierre el modal
+    modal.querySelector(".modal-cta").onclick = e => {
+      e.stopPropagation();
+    };
+
+    // 🔥 Cerrar con tecla ESC
+    const escListener = (e) => {
+      if (e.key === "Escape") cerrarModal();
+    };
+    document.addEventListener("keydown", escListener);
 
     document.body.appendChild(modal);
   }
 
   function render() {
 
-    if (!productos.length) return; // ⚠️ Evita render vacío antes de cargar
+    if (!productos || !productos.length) return;
 
     catalogo.innerHTML = "";
 
     const texto = busqueda.value.toLowerCase();
     const categoria = categoriaSelect.value;
 
-    // ⚠️ Solo generar categorías UNA vez
+    // Generar categorías solo una vez
     if (categoriaSelect.options.length <= 1) {
+
       const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
 
       categoriaSelect.innerHTML = `<option value="all">Todas las categorías</option>`;
+
       categoriasUnicas.forEach(c => {
         const opt = document.createElement("option");
         opt.value = c;
@@ -121,7 +155,7 @@ if (catalogo) {
       });
   }
 
-  // 🔥 ESTA es la clave para que aparezcan todos al entrar
+  // 🔥 Hacer render global para que puedas llamarlo desde donde cargás el CSV
   window.render = render;
 
   busqueda.addEventListener("input", render);
