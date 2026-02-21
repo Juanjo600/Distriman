@@ -9,36 +9,33 @@ document.addEventListener("DOMContentLoaded", function () {
       const resultado = Papa.parse(csv, {
         header: true,
         skipEmptyLines: true,
-        dynamicTyping: false // ⚠️ lo desactivo para limpiar nosotros
+        dynamicTyping: false
       });
 
-      resultado.data.forEach((item, index) => {
+      const limpiar = (valor) => {
+        if (!valor) return "";
+        return valor.toString().replace(/^"(.*)"$/, '$1').trim();
+      };
 
-        // Función para limpiar texto (sacar comillas y null)
-        const limpiar = (valor) => {
-          if (!valor) return "";
-          return valor.toString().replace(/^"(.*)"$/, '$1').trim();
-        };
+      productos = resultado.data.map((item, index) => {
 
         const imagenBase = limpiar(item.imagen_base);
 
-        productos.push({
+        return {
           id: `producto-${index}`,
           nombre: limpiar(item.nombre),
           categoria: limpiar(item.categoria),
           descripcion: limpiar(item.descripcion),
           precio: limpiar(item.precio) === "null" ? "" : limpiar(item.precio),
           imagenBase: imagenBase
-        });
+        };
 
       });
 
       console.log("Productos cargados:", productos);
 
-      // ⚠️ Ahora sí renderizamos cuando YA están cargados
-      if (typeof renderProductos === "function") {
-        renderProductos(productos);
-      } else if (typeof render === "function") {
+      // 🔥 IMPORTANTE: renderizar inmediatamente
+      if (typeof render === "function") {
         render();
       }
 
