@@ -86,13 +86,13 @@ if (catalogo) {
     lente.style.width = "250px";   // Lente más grande
     lente.style.height = "250px";
     lente.style.border = "2px solid rgba(0,0,0,0.2)";
-    lente.style.borderRadius = "50%";
+    lente.style.borderRadius = "4px";
     lente.style.position = "absolute";
     lente.style.pointerEvents = "none"; // No bloquear el mouse
     lente.style.display = "none";
   
     img.onload = () => {
-      const zoomFactor = 1.4; // zoom más moderado
+      const zoomFactor = 1.2; // zoom más moderado
   
       const naturalWidth = img.naturalWidth;
       const naturalHeight = img.naturalHeight;
