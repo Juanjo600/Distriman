@@ -508,3 +508,59 @@ input:focus, select:focus {
   white-space: pre-line;
   line-height: 1.7;
 }
+
+/* =========================================================
+   FIX MODAL ALTURA + SCROLL INTERNO PROFESIONAL
+   ========================================================= */
+
+/* Limitar altura total del modal */
+.modal-content {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* El body del modal ocupa el espacio disponible */
+.modal-body {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+  flex: 1;
+  min-height: 0; /* CLAVE para que funcione el scroll interno */
+}
+
+/* Columna derecha en formato vertical */
+.modal-info {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Solo la descripción hace scroll */
+.modal-info p {
+  overflow-y: auto;
+  max-height: 100%;
+  padding-right: 6px;
+}
+
+/* Scrollbar más elegante */
+.modal-info p::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-info p::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-content {
+    max-height: 95vh;
+  }
+
+  .modal-body {
+    grid-template-columns: 1fr;
+  }
+}
