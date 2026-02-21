@@ -5,19 +5,30 @@ const categoriaSelect = document.getElementById("categoria");
 if (catalogo) {
 
   function obtenerImagen(imagenBase) {
+
     const img = document.createElement("img");
     img.loading = "lazy";
-
-    img.src = `img/${imagenBase}.webp`;
-
+  
+    if (!imagenBase) {
+      img.src = "img/placeholder.webp";
+      return img;
+    }
+  
+    const extensiones = ["webp", "jpg", "png"];
+    let intento = 0;
+  
     img.onerror = function () {
-      if (this.src.includes(".webp")) {
-        this.src = `img/${imagenBase}.jpg`;
-      } else if (this.src.includes(".jpg")) {
-        this.src = `img/${imagenBase}.png`;
+      intento++;
+      if (intento < extensiones.length) {
+        img.src = `img/${imagenBase}.${extensiones[intento]}`;
+      } else {
+        img.src = "img/placeholder.webp";
       }
     };
-
+  
+    // ⚠️ IMPORTANTE: asignamos src DESPUÉS de definir onerror
+    img.src = `img/${imagenBase}.${extensiones[intento]}`;
+  
     return img;
   }
 
