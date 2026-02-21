@@ -18,18 +18,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         valor = valor.toString().trim();
 
-        // Quitar comillas solo si están al inicio y final
         if (valor.startsWith('"') && valor.endsWith('"')) {
           valor = valor.slice(1, -1);
         }
 
         valor = valor.trim();
 
-        // Detectar NULL en cualquier formato
-        if (
-          valor === "" ||
-          valor.toLowerCase() === "null"
-        ) {
+        if (valor === "" || valor.toLowerCase() === "null") {
           return null;
         }
 
@@ -43,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const descripcion = limpiar(item.descripcion);
         const precioRaw = limpiar(item.precio);
         const imagenBase = limpiar(item["NOMBRE FOTO"]);
+        const medidaRaw = limpiar(item.medida);
 
         return {
           id: `producto-${index}`,
@@ -50,14 +46,12 @@ document.addEventListener("DOMContentLoaded", function () {
           categoria: categoria || "",
           descripcion: descripcion || "",
           precio: precioRaw ? Number(precioRaw) : null,
-          imagenBase: imagenBase || null
+          imagenBase: imagenBase || null,
+          medidas: medidaRaw ? medidaRaw.split(",").map(m => m.trim()) : []
         };
 
       });
 
-      console.log("Productos cargados:", productos);
-
-      // Render automático cuando termina de cargar
       if (typeof window.render === "function") {
         window.render();
       }

@@ -1,11 +1,11 @@
 const catalogo = document.getElementById("catalogo");
 const busqueda = document.getElementById("busqueda");
 const categoriaSelect = document.getElementById("categoria");
+const medidaSelect = document.getElementById("medida");
 
 if (catalogo) {
 
   function obtenerImagen(imagenBase) {
-
     const img = document.createElement("img");
     img.loading = "lazy";
 
@@ -15,24 +15,21 @@ if (catalogo) {
     }
 
     img.src = `img/${imagenBase}`;
-    img.alt = imagenBase;
-
     return img;
   }
 
   function abrirModal(producto) {
 
+    document.body.style.overflow = "hidden";
+
     const mensaje = encodeURIComponent(
       `Hola, estoy interesado en el producto: ${producto.nombre}`
     );
 
+    const descripcionFormateada = producto.descripcion.replace(/\n/g, "<br>");
+
     const precioHTML = producto.precio
       ? `<div class="modal-precio">$${producto.precio}</div>`
-      : "";
-
-    // 🔥 Formatear saltos de línea
-    const descripcionFormateada = producto.descripcion
-      ? producto.descripcion.replace(/\n/g, "<br>")
       : "";
 
     const modal = document.createElement("div");
@@ -47,14 +44,13 @@ if (catalogo) {
 
           <div class="modal-info">
             <h2>${producto.nombre}</h2>
-            <p>${descripcionFormateada}</p>
             ${precioHTML}
+            <div class="modal-descripcion">${descripcionFormateada}</div>
 
             <a
               class="modal-cta"
               href="https://wa.me/59894862909?text=${mensaje}"
               target="_blank"
-              rel="noopener"
             >
               ¿Interesado? Contactate con nosotros
             </a>
@@ -66,52 +62,34 @@ if (catalogo) {
     const img = obtenerImagen(producto.imagenBase);
     modal.querySelector(".modal-img").appendChild(img);
 
-    // 🔒 BLOQUEAR SCROLL DEL BODY
-    document.body.style.overflow = "hidden";
-
-    const cerrarModal = () => {
-      modal.remove();
+    modal.querySelector(".modal-close").onclick = () => {
       document.body.style.overflow = "";
-      document.removeEventListener("keydown", escListener);
+      modal.remove();
     };
 
-    // Cerrar con botón
-    modal.querySelector(".modal-close").onclick = cerrarModal;
-
-    // Cerrar haciendo click afuera
     modal.onclick = e => {
-      if (e.target === modal) cerrarModal();
+      if (e.target === modal) {
+        document.body.style.overflow = "";
+        modal.remove();
+      }
     };
-
-    // 🔥 Evitar que el click del botón cierre el modal
-    modal.querySelector(".modal-cta").onclick = e => {
-      e.stopPropagation();
-    };
-
-    // 🔥 Cerrar con tecla ESC
-    const escListener = (e) => {
-      if (e.key === "Escape") cerrarModal();
-    };
-    document.addEventListener("keydown", escListener);
 
     document.body.appendChild(modal);
   }
 
   function render() {
 
-    if (!productos || !productos.length) return;
+    if (!productos.length) return;
 
     catalogo.innerHTML = "";
 
     const texto = busqueda.value.toLowerCase();
     const categoria = categoriaSelect.value;
+    const medida = medidaSelect.value;
 
-    // Generar categorías solo una vez
+    // Categorías
     if (categoriaSelect.options.length <= 1) {
-
       const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
-
-      categoriaSelect.innerHTML = `<option value="all">Todas las categorías</option>`;
 
       categoriasUnicas.forEach(c => {
         const opt = document.createElement("option");
@@ -121,10 +99,25 @@ if (catalogo) {
       });
     }
 
+    // Medidas
+    if (medidaSelect.options.length <= 1) {
+      const medidasUnicas = [
+        ...new Set(productos.flatMap(p => p.medidas))
+      ];
+
+      medidasUnicas.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        medidaSelect.appendChild(opt);
+      });
+    }
+
     productos
       .filter(p =>
         p.nombre.toLowerCase().includes(texto) &&
-        (categoria === "all" || p.categoria === categoria)
+        (categoria === "all" || p.categoria === categoria) &&
+        (medida === "all" || p.medidas.includes(medida))
       )
       .forEach(p => {
 
@@ -143,9 +136,14 @@ if (catalogo) {
           ? `<strong>$${p.precio}</strong>`
           : "";
 
+        const medidasHTML = p.medidas.length
+          ? `<div class="producto-medida">${p.medidas.join(" / ")}</div>`
+          : "";
+
         card.innerHTML += `
           <h3>${p.nombre}</h3>
           <p>${p.descripcion}</p>
+          ${medidasHTML}
           ${precioHTML}
         `;
 
@@ -155,9 +153,9 @@ if (catalogo) {
       });
   }
 
-  // 🔥 Hacer render global para que puedas llamarlo desde donde cargás el CSV
   window.render = render;
 
   busqueda.addEventListener("input", render);
   categoriaSelect.addEventListener("change", render);
+  medidaSelect.addEventListener("change", render);
 }
