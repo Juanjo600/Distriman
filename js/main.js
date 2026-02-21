@@ -68,29 +68,38 @@ if (catalogo) {
     lente.className = "zoom-lente";
     imgContainer.appendChild(lente);
   
-    imgContainer.addEventListener("mousemove", e => {
-      lente.style.display = "block";
+    // Esperar que la imagen cargue para conocer sus dimensiones naturales
+    img.onload = () => {
+      const zoomFactor = 2; // cuanto quieres hacer zoom
+      const naturalWidth = img.naturalWidth;
+      const naturalHeight = img.naturalHeight;
   
-      const rect = e.currentTarget.getBoundingClientRect();
-      let x = e.clientX - rect.left - lente.offsetWidth / 2;
-      let y = e.clientY - rect.top - lente.offsetHeight / 2;
+      imgContainer.addEventListener("mousemove", e => {
+        lente.style.display = "block";
   
-      // Limitar para que no salga de la imagen
-      x = Math.max(0, Math.min(x, rect.width - lente.offsetWidth));
-      y = Math.max(0, Math.min(y, rect.height - lente.offsetHeight));
+        const rect = imgContainer.getBoundingClientRect();
+        let x = e.clientX - rect.left - lente.offsetWidth / 2;
+        let y = e.clientY - rect.top - lente.offsetHeight / 2;
   
-      lente.style.left = x + "px";
-      lente.style.top = y + "px";
+        x = Math.max(0, Math.min(x, rect.width - lente.offsetWidth));
+        y = Math.max(0, Math.min(y, rect.height - lente.offsetHeight));
   
-      // Fondo para el zoom
-      lente.style.backgroundImage = `url(${producto.imagenBase ? `img/${producto.imagenBase}` : "img/placeholder.webp"})`;
-      lente.style.backgroundSize = `${rect.width * 2}px ${rect.height * 2}px`; // zoom 2x
-      lente.style.backgroundPosition = `-${x*2}px -${y*2}px`;
-    });
+        lente.style.left = x + "px";
+        lente.style.top = y + "px";
   
-    imgContainer.addEventListener("mouseleave", () => {
-      lente.style.display = "none";
-    });
+        // Ajuste del background usando tamaño natural
+        const bgX = (x / rect.width) * naturalWidth * -zoomFactor + lente.offsetWidth/2;
+        const bgY = (y / rect.height) * naturalHeight * -zoomFactor + lente.offsetHeight/2;
+  
+        lente.style.backgroundImage = `url(${img.src})`;
+        lente.style.backgroundSize = `${naturalWidth * zoomFactor}px ${naturalHeight * zoomFactor}px`;
+        lente.style.backgroundPosition = `${bgX}px ${bgY}px`;
+      });
+  
+      imgContainer.addEventListener("mouseleave", () => {
+        lente.style.display = "none";
+      });
+    };
     // -----------------------------------
   
     // Cerrar modal
