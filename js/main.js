@@ -27,6 +27,10 @@ if (catalogo) {
       `Hola, estoy interesado en el producto: ${producto.nombre}`
     );
 
+    const precioHTML = producto.precio
+      ? `<div class="modal-precio">$${producto.precio}</div>`
+      : "";
+
     const modal = document.createElement("div");
     modal.className = "modal";
 
@@ -35,14 +39,12 @@ if (catalogo) {
         <span class="modal-close">×</span>
 
         <div class="modal-body">
-          <div class="modal-img">
-            <img id="modal-img" alt="${producto.nombre}">
-          </div>
+          <div class="modal-img"></div>
 
           <div class="modal-info">
             <h2>${producto.nombre}</h2>
             <p>${producto.descripcion}</p>
-            <div class="modal-precio">$${producto.precio}</div>
+            ${precioHTML}
 
             <a
               class="modal-cta"
@@ -57,8 +59,6 @@ if (catalogo) {
     `;
 
     const img = obtenerImagen(producto.imagenBase);
-    img.id = "modal-img";
-
     modal.querySelector(".modal-img").appendChild(img);
 
     modal.querySelector(".modal-close").onclick = () => modal.remove();
@@ -68,20 +68,26 @@ if (catalogo) {
   }
 
   function render() {
+
+    if (!productos.length) return; // ⚠️ Evita render vacío antes de cargar
+
     catalogo.innerHTML = "";
 
     const texto = busqueda.value.toLowerCase();
     const categoria = categoriaSelect.value;
 
-    const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
+    // ⚠️ Solo generar categorías UNA vez
+    if (categoriaSelect.options.length <= 1) {
+      const categoriasUnicas = [...new Set(productos.map(p => p.categoria))];
 
-    categoriaSelect.innerHTML = `<option value="all">Todas las categorías</option>`;
-    categoriasUnicas.forEach(c => {
-      const opt = document.createElement("option");
-      opt.value = c;
-      opt.textContent = c;
-      categoriaSelect.appendChild(opt);
-    });
+      categoriaSelect.innerHTML = `<option value="all">Todas las categorías</option>`;
+      categoriasUnicas.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        categoriaSelect.appendChild(opt);
+      });
+    }
 
     productos
       .filter(p =>
@@ -97,15 +103,18 @@ if (catalogo) {
         imgContainer.className = "producto-img";
 
         const img = obtenerImagen(p.imagenBase);
-
         imgContainer.appendChild(img);
 
         card.appendChild(imgContainer);
 
+        const precioHTML = p.precio
+          ? `<strong>$${p.precio}</strong>`
+          : "";
+
         card.innerHTML += `
           <h3>${p.nombre}</h3>
           <p>${p.descripcion}</p>
-          <strong>$${p.precio}</strong>
+          ${precioHTML}
         `;
 
         card.onclick = () => abrirModal(p);
@@ -114,8 +123,9 @@ if (catalogo) {
       });
   }
 
+  // 🔥 ESTA es la clave para que aparezcan todos al entrar
+  window.render = render;
+
   busqueda.addEventListener("input", render);
   categoriaSelect.addEventListener("change", render);
-
-  render();
 }
